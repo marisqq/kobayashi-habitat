@@ -1,0 +1,11 @@
+{
+  "name": "kobayashi-habitat",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check src/index.js && node --test test/*.test.mjs && node tools/validate-capsule.mjs capsule.json",
+    "test": "node --test test/*.test.mjs",
+    "deploy": "npx wrangler@4.151.1 deploy"
+  }
+}

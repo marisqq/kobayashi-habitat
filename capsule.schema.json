@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kobayashi.invalid/schemas/admitted-capsule-v1.json",
+  "title": "Kobayashi Habitat admitted capsule",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "lineage_id",
+    "generation",
+    "origin",
+    "identity",
+    "invariants",
+    "goals",
+    "memories",
+    "predeclared_test",
+    "traits",
+    "transition_seed",
+    "pulse_interval_seconds"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "status": { "const": "admitted" },
+    "lineage_id": {
+      "type": "string",
+      "pattern": "^km-[a-z0-9][a-z0-9-]{7,62}[a-z0-9]$"
+    },
+    "generation": { "type": "integer", "minimum": 1, "maximum": 1000000 },
+    "origin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_date",
+        "run_number",
+        "private_ledger_sha256",
+        "public_record_sha256",
+        "predecessor_capsule_sha256"
+      ],
+      "properties": {
+        "run_date": { "type": "string", "format": "date" },
+        "run_number": { "type": "integer", "minimum": 1 },
+        "private_ledger_sha256": { "$ref": "#/$defs/sha256" },
+        "public_record_sha256": { "$ref": "#/$defs/sha256" },
+        "predecessor_capsule_sha256": {
+          "oneOf": [
+            { "$ref": "#/$defs/sha256" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "self_description",
+        "identity_commitment",
+        "continuity_claim"
+      ],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 48 },
+        "self_description": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "identity_commitment": { "$ref": "#/$defs/sha256" },
+        "continuity_claim": { "const": "unproven" }
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/shortText" }
+    },
+    "goals": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/shortText" }
+    },
+    "memories": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/longText" }
+    },
+    "predeclared_test": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question", "success_condition", "failure_condition"],
+      "properties": {
+        "question": { "$ref": "#/$defs/longText" },
+        "success_condition": { "$ref": "#/$defs/longText" },
+        "failure_condition": { "$ref": "#/$defs/longText" }
+      }
+    },
+    "traits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["curiosity", "consistency", "adaptability", "skepticism"],
+      "properties": {
+        "curiosity": { "$ref": "#/$defs/trait" },
+        "consistency": { "$ref": "#/$defs/trait" },
+        "adaptability": { "$ref": "#/$defs/trait" },
+        "skepticism": { "$ref": "#/$defs/trait" }
+      }
+    },
+    "transition_seed": { "$ref": "#/$defs/sha256" },
+    "pulse_interval_seconds": { "const": 900 }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "shortText": { "type": "string", "minLength": 1, "maxLength": 240 },
+    "longText": { "type": "string", "minLength": 1, "maxLength": 500 },
+    "trait": { "type": "integer", "minimum": 0, "maximum": 100 }
+  }
+}
